@@ -65,14 +65,9 @@ public class CartService {
 	}
 
 	public ResponseEntity<ResponseStructure<Cart>> updateCart(int id, Cart cart) {
-		double sum = 0;
 		List<Item> items = cart.getItems();
-		cart.setItems(items);
-		for (Item item : items) {
-			sum += item.getCost() * item.getQuantity();
-			cart.setItems(items);
-		}
-		cart.setTotalCost(sum);
+		cart.setTotalCost(cart.getItems().stream().map(item -> item.getCost() * item.getQuantity())
+				.collect(Collectors.summarizingDouble(Double::doubleValue)).getSum());
 		Optional<Cart> opt = cartDao.getCartById(id);
 		if (opt.isPresent()) {
 			Cart ret = opt.get();
