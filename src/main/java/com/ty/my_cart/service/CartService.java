@@ -1,7 +1,11 @@
 package com.ty.my_cart.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,15 +21,26 @@ public class CartService {
 
 	@Autowired
 	private CartDao cartDao;
+	@Autowired
+	private Item item;
 
 	public ResponseEntity<ResponseStructure<Cart>> saveCart(Cart cart) {
 		double sum = 0;
+//		List<Item> items = cart.getItems();
+//		cart.setItems(items);
+//		for (Item item : items) {
+//			sum += item.getCost() * item.getQuantity();
+//		}
 		List<Item> items = cart.getItems();
-		cart.setItems(items);
-		for (Item item : items) {
-			sum += item.getCost() * item.getQuantity();
-		}
-		cart.setTotalCost(sum);
+
+		/*
+		 * items.stream().map(item ->
+		 * item.getCost().multiply(item.getQuantity())).reduce(BigDecimal.ZERO,
+		 * BigDecimal::add);
+		 */
+		
+		Stream<Object> test = items.stream().map(x-> (x.getQuantity()*x.getCost()));
+		// cart.setTotalCost(sum);
 		ResponseStructure<Cart> responseStructure = new ResponseStructure<>();
 		responseStructure.setStatus(HttpStatus.CREATED.value());
 		responseStructure.setMessage("SUCCESS");
