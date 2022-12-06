@@ -1,5 +1,7 @@
 package com.ty.my_cart.service;
 
+import static org.springframework.http.HttpStatus.CREATED;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -25,27 +27,14 @@ public class CartService {
 	private Item item;
 
 	public ResponseEntity<ResponseStructure<Cart>> saveCart(Cart cart) {
-		double sum = 0;
-//		List<Item> items = cart.getItems();
-//		cart.setItems(items);
-//		for (Item item : items) {
-//			sum += item.getCost() * item.getQuantity();
-//		}
 		List<Item> items = cart.getItems();
-
-		/*
-		 * items.stream().map(item ->
-		 * item.getCost().multiply(item.getQuantity())).reduce(BigDecimal.ZERO,
-		 * BigDecimal::add);
-		 */
-		
-		Stream<Object> test = items.stream().map(x-> (x.getQuantity()*x.getCost()));
-		// cart.setTotalCost(sum);
+		cart.setTotalCost(cart.getItems().stream().map(item -> item.getCost() * item.getQuantity())
+				.collect(Collectors.summarizingDouble(Double::doubleValue)).getSum());
 		ResponseStructure<Cart> responseStructure = new ResponseStructure<>();
 		responseStructure.setStatus(HttpStatus.CREATED.value());
 		responseStructure.setMessage("SUCCESS");
 		responseStructure.setData(cartDao.saveCart(cart));
-		return new ResponseEntity<>(responseStructure, HttpStatus.CREATED);
+		return new ResponseEntity<>(responseStructure, CREATED);
 	}
 
 	public ResponseEntity<ResponseStructure<Cart>> getCartById(int id) {
