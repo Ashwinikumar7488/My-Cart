@@ -1,13 +1,9 @@
 package com.ty.my_cart.service;
 
 import static org.springframework.http.HttpStatus.CREATED;
-
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +19,6 @@ public class CartService {
 
 	@Autowired
 	private CartDao cartDao;
-	@Autowired
-	private Item item;
 
 	public ResponseEntity<ResponseStructure<Cart>> saveCart(Cart cart) {
 		List<Item> items = cart.getItems();
